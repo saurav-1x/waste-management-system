@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🗑️ Waste Management System - Complaints Dashboard</h1>
+            <p class="subtitle">Total Complaints: <strong><%= complaints.length %></strong></p>
+        </header>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-number"><%= complaints.filter(c => c.status === 'Pending').length %></div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= complaints.filter(c => c.status === 'Forwarded').length %></div>
+                <div class="stat-label">Forwarded</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= complaints.filter(c => c.status === 'Resolved').length %></div>
+                <div class="stat-label">Resolved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= complaints.filter(c => c.status === 'Cancelled').length %></div>
+                <div class="stat-label">Cancelled</div>
+            </div>
+        </div>
+
+        <% if (complaints.length === 0) { %>
+            <div class="no-complaints">
+                <p>No complaints found</p>
+            </div>
+        <% } else { %>
+            <div class="complaints-grid">
+                <% complaints.forEach((complaint, index) => { %>
+                    <div class="complaint-card">
+                        <div class="complaint-header">
+                            <span class="complaint-id">#<%= index + 1 %></span>
+                            <span class="status-badge status-<%= complaint.status.toLowerCase() %>">
+                                <%= complaint.status %>
+                            </span>
+                        </div>
+
+                        <div class="complaint-body">
+                            <div class="detail-group">
+                                <label>Reporter Name:</label>
+                                <p><%= complaint.name %></p>
+                            </div>
+
+                            <div class="detail-group">
+                                <label>Description:</label>
+                                <p><%= complaint.description %></p>
+                            </div>
+
+                            <div class="location-group">
+                                <label>Location:</label>
+                                <p>
+                                    <% if (complaint.location && complaint.location.area) { %>
+                                        <%= complaint.location.area %>, <%= complaint.location.city %>
+                                    <% } else { %>
+                                        <em>Not specified</em>
+                                    <% } %>
+                                </p>
+                            </div>
+
+                            <% if (complaint.imagePath) { %>
+                                <div class="image-group">
+                                    <label>Complaint Image:</label>
+                                    <img src="<%= complaint.imagePath %>" alt="Complaint Image" class="complaint-image">
+                                </div>
+                            <% } %>
+
+                            <div class="meta-info">
+                                <span class="date-info">
+                                    📅 <%= new Date(complaint.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <footer class="footer">
+            <p>Waste Management System | Backend Dashboard</p>
+        </footer>
+    </div>
+</body>
+</html>

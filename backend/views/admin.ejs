@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Waste Management</title>
+    <link rel="stylesheet" href="/admin-style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>🗑️ Admin Dashboard</h1>
+                <p>Waste Management System - Complaint Management</p>
+            </div>
+        </header>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-card pending">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-content">
+                    <div class="stat-number pending-count"><%= complaints.filter(c => c.status === 'Pending').length %></div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+            <div class="stat-card forwarded">
+                <div class="stat-icon">📤</div>
+                <div class="stat-content">
+                    <div class="stat-number forwarded-count"><%= complaints.filter(c => c.status === 'Forwarded').length %></div>
+                    <div class="stat-label">Forwarded</div>
+                </div>
+            </div>
+            <div class="stat-card resolved">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <div class="stat-number resolved-count"><%= complaints.filter(c => c.status === 'Resolved').length %></div>
+                    <div class="stat-label">Resolved</div>
+                </div>
+            </div>
+            <div class="stat-card cancelled">
+                <div class="stat-icon">❌</div>
+                <div class="stat-content">
+                    <div class="stat-number cancelled-count"><%= complaints.filter(c => c.status === 'Cancelled').length %></div>
+                    <div class="stat-label">Cancelled</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Buttons -->
+        <section class="filter-section">
+            <button class="filter-btn active" data-filter="all">🔍 All Complaints</button>
+            <button class="filter-btn" data-filter="Pending">⏳ Pending</button>
+            <button class="filter-btn" data-filter="Forwarded">📤 Forwarded</button>
+            <button class="filter-btn" data-filter="Resolved">✅ Resolved</button>
+            <button class="filter-btn" data-filter="Cancelled">❌ Cancelled</button>
+        </section>
+
+        <!-- Complaints Grid -->
+        <section class="complaints-section">
+            <% if (complaints.length === 0) { %>
+                <div class="no-complaints">
+                    <h2>No Complaints Found</h2>
+                    <p>All complaints have been resolved!</p>
+                </div>
+            <% } else { %>
+                <div class="complaints-grid">
+                    <% complaints.forEach((complaint, index) => { %>
+                        <div class="complaint-card" data-status="<%= complaint.status %>" data-id="<%= complaint._id %>">
+                            <!-- Card Header -->
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <span class="complaint-number">#<%= index + 1 %></span>
+                                    <span class="status-badge status-<%= complaint.status.toLowerCase() %>">
+                                        <%= complaint.status %>
+                                    </span>
+                                </div>
+                                <button class="delete-btn" onclick="deleteComplaint('<%= complaint._id %>')">✕</button>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <div class="info-row">
+                                    <span class="label">👤 Reporter:</span>
+                                    <span class="value"><%= complaint.name %></span>
+                                </div>
+
+                                <div class="info-row">
+                                    <span class="label">📝 Description:</span>
+                                    <span class="value"><%= complaint.description %></span>
+                                </div>
+
+                                <div class="info-row">
+                                    <span class="label">📍 Location:</span>
+                                    <span class="value">
+                                        <% if (complaint.location && complaint.location.area) { %>
+                                            <%= complaint.location.area %>, <%= complaint.location.city %>
+                                        <% } else { %>
+                                            Not specified
+                                        <% } %>
+                                    </span>
+                                </div>
+
+                                <div class="info-row">
+                                    <span class="label">📅 Date:</span>
+                                    <span class="value">
+                                        <%= new Date(complaint.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                    </span>
+                                </div>
+
+                                <% if (complaint.imagePath) { %>
+                                    <div class="image-container">
+                                        <img src="<%= complaint.imagePath %>" alt="Complaint Image" class="complaint-img">
+                                    </div>
+                                <% } %>
+                            </div>
+
+                            <!-- Card Footer with Actions -->
+                            <div class="card-footer">
+                                <% if (complaint.status === 'Pending') { %>
+                                    <button class="action-btn forward-btn" onclick="forwardComplaint('<%= complaint._id %>')">
+                                        📤 Forward to Municipality
+                                    </button>
+                                <% } %>
+                                <% if (complaint.status !== 'Resolved') { %>
+                                    <button class="action-btn resolve-btn" onclick="resolveComplaint('<%= complaint._id %>')">
+                                        ✅ Mark Resolved
+                                    </button>
+                                <% } %>
+                                <% if (complaint.status !== 'Cancelled') { %>
+                                    <button class="action-btn cancel-btn" onclick="cancelComplaint('<%= complaint._id %>')">
+                                        ❌ Cancel
+                                    </button>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </section>
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <p>&copy; 2026 Waste Management System - Admin Dashboard</p>
+        </footer>
+    </div>
+
+    <script src="/admin-script.js"></script>
+</body>
+</html>
