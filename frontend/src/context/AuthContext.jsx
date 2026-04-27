@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
       toast.success('Login successful!');
       return true;
     } catch (error) {
+      console.error('Login Error Details:', error.response?.data || error.message);
       toast.error(error.response?.data?.message || 'Login failed');
       return false;
     }
@@ -44,6 +45,7 @@ export const AuthProvider = ({ children }) => {
       toast.success('Registration successful!');
       return true;
     } catch (error) {
+      console.error('Registration Error Details:', error.response?.data || error.message);
       toast.error(error.response?.data?.message || 'Registration failed');
       return false;
     }
